@@ -3,7 +3,9 @@ import java.io.*;
 
 public class ListaEnlazada<T> implements Serializable {
     private static final long serialVersionUID = 1L;
+    
     private class Nodo<T> implements Serializable {
+        private static final long serialVersionUID = 1L;
         T objeto;
         Nodo<T> siguiente = null;
         public Nodo(T objeto) { this.objeto = objeto; }
@@ -11,6 +13,32 @@ public class ListaEnlazada<T> implements Serializable {
 
     private Nodo<T> cabeza = null;
     private int largo = 0;
+
+    // --- MÉTODOS DE PERSISTENCIA QUE FALTABAN ---
+    
+    public void guardarDatos() {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("datos.dat"))) {
+            oos.writeObject(cabeza);
+            oos.writeInt(largo);
+        } catch (IOException e) { 
+            e.printStackTrace(); 
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public void cargarDatos() {
+        File archivo = new File("datos.dat");
+        if (archivo.exists()) {
+            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(archivo))) {
+                cabeza = (Nodo<T>) ois.readObject();
+                largo = ois.readInt();
+            } catch (Exception e) { 
+                e.printStackTrace(); 
+            }
+        }
+    }
+
+    // --- TUS MÉTODOS ORIGINALES ---
 
     public void insertarFinal(T objeto) {
         Nodo<T> nodoA = new Nodo<>(objeto);
@@ -22,6 +50,7 @@ public class ListaEnlazada<T> implements Serializable {
             puntero.siguiente = nodoA;
         }
         largo++;
+        guardarDatos(); // Guardamos automáticamente al insertar
     }
 
     public T buscarFecha(String fecha) {
