@@ -1,28 +1,129 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BROsiks Tracker</title>
     <style>
-        body { background-color: #007bff; color: white; font-family: sans-serif; margin: 0; padding: 15px; text-align: center; }
-        header { display: flex; justify-content: space-between; border-bottom: 2px solid white; padding-bottom: 10px; }
-        .btn { border: 2px solid white; padding: 15px; margin: 20px auto; width: 80%; display: block; color: white; text-decoration: none; font-weight: bold; }
-        .macros { text-align: left; margin-top: 30px; width: 80%; margin-left: auto; margin-right: auto; }
-        .line { border-bottom: 1px dashed white; padding: 5px 0; }
+        /* Estilo general basado en tu diseño azul */
+        body { 
+            background-color: #007bff; 
+            color: white; 
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; 
+            margin: 0; 
+            padding: 20px; 
+            text-align: center; 
+        }
+        header { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            border-bottom: 2px solid white; 
+            padding-bottom: 10px; 
+            margin-bottom: 20px;
+        }
+        .btn { 
+            display: block; 
+            width: 85%; 
+            margin: 15px auto; 
+            padding: 18px; 
+            border: 2px solid white; 
+            color: white; 
+            text-decoration: none; 
+            font-size: 18px; 
+            font-weight: bold; 
+            background: none;
+            border-radius: 10px;
+        }
+        .btn:active { background-color: rgba(255, 255, 255, 0.2); }
+        
+        .macros { text-align: left; width: 85%; margin: 30px auto; }
+        .line { border-bottom: 1px dashed white; padding: 8px 0; font-size: 17px; }
+
+        /* Estilos de la ventanita (Modal) */
+        #modalAgregar {
+            display: none; 
+            position: fixed; 
+            z-index: 1; 
+            left: 0; top: 0; 
+            width: 100%; height: 100%; 
+            background-color: rgba(0,0,0,0.7); 
+        }
+        .modal-content {
+            background-color: #007bff;
+            margin: 15% auto;
+            padding: 20px;
+            border: 2px solid white;
+            width: 85%;
+            border-radius: 15px;
+        }
+        input {
+            width: 90%;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 8px;
+            border: none;
+            font-size: 16px;
+        }
+        .btn-save { background: white; color: #007bff; border: none; width: 100%; margin-top: 10px; }
+        .btn-cancel { border: none; background: none; color: white; margin-top: 10px; font-size: 14px; }
     </style>
 </head>
 <body>
+
     <header>
-        <div>💪 CALORIE TRACKER</div>
-        <div style="font-size:30px">☰</div>
+        <div style="font-size: 20px; font-weight: bold;">💪 CALORIE TRACKER</div>
+        <div style="font-size: 30px; cursor: pointer;">☰</div>
     </header>
-    <a href="#" class="btn">AGREGAR comida</a>
-    <a href="#" class="btn">Cambiar dia</a>
+
+    <button class="btn" onclick="abrirModal()">AGREGAR comida</button>
+    
+    <form action="/cambiar-dia" method="post" style="display: inline;">
+        <input type="hidden" name="fecha" id="inputFecha">
+        <button type="submit" class="btn" onclick="pedirFecha(event)">Cambiar dia</button>
+    </form>
+
     <div class="macros">
         <h3>Macronutrientes actuales</h3>
-        <div class="line">Calorias: <span th:text="${calT}"></span></div>
-        <div class="line">Proteinas: <span th:text="${proT}"></span></div>
-        <div class="line">Carbohidratos: <span th:text="${carbT}"></span></div>
-        <div class="line">Grasas: <span th:text="${grasT}"></span></div>
+        <div class="line">Calorias: <span th:text="${calT}">0</span> kcal</div>
+        <div class="line">Proteinas: <span th:text="${proT}">0</span> g</div>
+        <div class="line">Carbohidratos: <span th:text="${carbT}">0</span> g</div>
+        <div class="line">Grasas: <span th:text="${grasT}">0</span> g</div>
     </div>
+
+    <div id="modalAgregar">
+        <div class="modal-content">
+            <h3>Nueva Comida</h3>
+            <form action="/add" method="post">
+                <input type="text" name="n" placeholder="Nombre (ej. Pollo)" required>
+                <input type="number" step="any" name="c" placeholder="Calorías" required>
+                <input type="number" step="any" name="p" placeholder="Proteínas" required>
+                <input type="number" step="any" name="ch" placeholder="Carbohidratos" required>
+                <input type="number" step="any" name="g" placeholder="Grasas" required>
+                <button type="submit" class="btn btn-save">GUARDAR</button>
+                <button type="button" class="btn-cancel" onclick="cerrarModal()">CANCELAR</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function abrirModal() { document.getElementById('modalAgregar').style.display = 'block'; }
+        function cerrarModal() { document.getElementById('modalAgregar').style.display = 'none'; }
+        
+        function pedirFecha(event) {
+            let fecha = prompt("Ingresa la fecha (dd/mm/aaaa):", new Date().toLocaleDateString('es-MX'));
+            if (fecha) {
+                document.getElementById('inputFecha').value = fecha;
+            } else {
+                event.preventDefault(); // Cancela el envío si no ponen fecha
+            }
+        }
+
+        // Cerrar modal si tocan fuera de la cajita
+        window.onclick = function(event) {
+            let modal = document.getElementById('modalAgregar');
+            if (event.target == modal) { cerrarModal(); }
+        }
+    </script>
 </body>
 </html>
