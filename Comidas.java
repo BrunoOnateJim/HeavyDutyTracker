@@ -1,4 +1,4 @@
-package calorias;
+
 public class Comidas {
     private String nombre;
     private double calorias;
