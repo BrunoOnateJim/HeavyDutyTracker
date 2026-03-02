@@ -32,6 +32,9 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>calorias.HeavyDutyApplication</mainClass>
+                </configuration>
             </plugin>
         </plugins>
     </build>
