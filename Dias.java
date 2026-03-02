@@ -1,4 +1,4 @@
-package calorias;
+
 public class Dias {
     private String fecha;
     private ListaEnlazada<Comidas> listaComidas;
