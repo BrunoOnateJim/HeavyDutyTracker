@@ -1,4 +1,4 @@
-package calorias;
+
 import java.io.*;
 
 public class ListaEnlazada<T> implements Serializable {
