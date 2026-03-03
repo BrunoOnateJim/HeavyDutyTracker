@@ -1,0 +1,108 @@
+package calorias;
+import java.io.*;
+
+public class ListaEnlazada<T> implements Serializable {
+    private static final long serialVersionUID = 1L;
+    
+    private class Nodo<T> implements Serializable {
+        private static final long serialVersionUID = 1L;
+        T objeto;
+        Nodo<T> siguiente = null;
+        public Nodo(T objeto) { this.objeto = objeto; }
+    }
+
+    private Nodo<T> cabeza = null;
+    private int largo = 0;
+
+    // --- MÉTODOS DE SUMA (Los que pide el Controller) ---
+
+    public double getTotalCalorias() {
+        double total = 0;
+        Nodo<T> puntero = cabeza;
+        while (puntero != null) {
+            if (puntero.objeto instanceof Comidas) {
+                total += ((Comidas) puntero.objeto).getCalorias();
+            }
+            puntero = puntero.siguiente;
+        }
+        return total;
+    }
+
+    public double getTotalProteinas() {
+        double total = 0;
+        Nodo<T> puntero = cabeza;
+        while (puntero != null) {
+            if (puntero.objeto instanceof Comidas) {
+                total += ((Comidas) puntero.objeto).getProteinas();
+            }
+            puntero = puntero.siguiente;
+        }
+        return total;
+    }
+
+    public double getTotalCarbohidratos() {
+        double total = 0;
+        Nodo<T> puntero = cabeza;
+        while (puntero != null) {
+            if (puntero.objeto instanceof Comidas) {
+                total += ((Comidas) puntero.objeto).getCarbohidratos();
+            }
+            puntero = puntero.siguiente;
+        }
+        return total;
+    }
+
+    public double getTotalGrasas() {
+        double total = 0;
+        Nodo<T> puntero = cabeza;
+        while (puntero != null) {
+            if (puntero.objeto instanceof Comidas) {
+                total += ((Comidas) puntero.objeto).getGrasas(); // Asegúrate que en Comidas.java sea getGrasas()
+            }
+            puntero = puntero.siguiente;
+        }
+        return total;
+    }
+
+    // --- TU MÉTODO DE INSERCIÓN CORREGIDO ---
+
+    public void insertar(T objeto) { // Cambié el nombre a 'insertar' para que coincida con el Controller
+        Nodo<T> nodoA = new Nodo<>(objeto);
+        if (cabeza == null) {
+            cabeza = nodoA;
+        } else {
+            Nodo<T> puntero = cabeza;
+            while (puntero.siguiente != null) puntero = puntero.siguiente;
+            puntero.siguiente = nodoA;
+        }
+        largo++;
+        guardarDatos();
+    }
+
+    // --- PERSISTENCIA Y OTROS MÉTODOS (Tus originales) ---
+    
+    public void guardarDatos() {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("datos.dat"))) {
+            oos.writeObject(cabeza);
+            oos.writeInt(largo);
+        } catch (IOException e) { e.printStackTrace(); }
+    }
+
+    public T buscarFecha(String fecha) {
+        Nodo<T> puntero = cabeza;
+        while (puntero != null) {
+            if (puntero.objeto instanceof Dias) {
+                Dias d = (Dias) puntero.objeto;
+                if (d.getFecha().equalsIgnoreCase(fecha)) return puntero.objeto;
+            }
+            puntero = puntero.siguiente;
+        }
+        return null;
+    }
+
+    public void reiniciar() { // Para el botón de cambiar día
+        cabeza = null;
+        largo = 0;
+        guardarDatos();
+    }
+}
