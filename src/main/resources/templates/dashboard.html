@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { background-color: #007bff; color: white; font-family: sans-serif; margin: 0; padding: 15px; text-align: center; }
+        header { display: flex; justify-content: space-between; border-bottom: 2px solid white; padding-bottom: 10px; }
+        .btn { border: 2px solid white; padding: 15px; margin: 20px auto; width: 80%; display: block; color: white; text-decoration: none; font-weight: bold; }
+        .macros { text-align: left; margin-top: 30px; width: 80%; margin-left: auto; margin-right: auto; }
+        .line { border-bottom: 1px dashed white; padding: 5px 0; }
+    </style>
+</head>
+<body>
+    <header>
+        <div>💪 CALORIE TRACKER</div>
+        <div style="font-size:30px">☰</div>
+    </header>
+    <a href="#" class="btn">AGREGAR comida</a>
+    <a href="#" class="btn">Cambiar dia</a>
+    <div class="macros">
+        <h3>Macronutrientes actuales</h3>
+        <div class="line">Calorias: <span th:text="${calT}"></span></div>
+        <div class="line">Proteinas: <span th:text="${proT}"></span></div>
+        <div class="line">Carbohidratos: <span th:text="${carbT}"></span></div>
+        <div class="line">Grasas: <span th:text="${grasT}"></span></div>
+    </div>
+</body>
+</html>
