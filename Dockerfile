@@ -1,10 +1,10 @@
-# Usamos una imagen que ya tiene todo listo para no descargar nada extra
+# Etapa 1: Compilación
 FROM maven:3.8.5-openjdk-17 AS build
 COPY . .
-# Compilamos de forma súper ligera
-RUN mvn clean package -DskipTests -Dmaven.test.skip=true
+RUN mvn clean package -DskipTests
 
-FROM openjdk:17-jdk-slim
+# Etapa 2: Ejecución (Cambiamos openjdk por eclipse-temurin)
+FROM eclipse-temurin:17-jre-alpine
 COPY --from=build /target/*.jar app.jar
-# Le decimos a Java que use poca memoria RAM
+# Limitamos la memoria para que Render no se sature
 ENTRYPOINT ["java", "-Xmx512m", "-jar", "/app.jar"]
